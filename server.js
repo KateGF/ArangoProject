@@ -1,19 +1,23 @@
-// app.js (tu archivo principal)
 const express = require('express');
+const { Database, aql } = require('arangojs');
 const app = express();
 const port = 3000;
 
-// Importa el enrutador de comentarios
-const commentRouter = require('./commentController');
-// Importa el enrutador de publicaciones
-const postRouter = require('./postController');
+const db = new Database({ url: 'http://localhost:8529', databaseName: '_system' });
+db.useBasicAuth('root', '1234');
 
 app.use(express.json());
 
-// Usa el enrutador de comentarios en una ruta específica
-app.use('/api/comments', commentRouter);
-// Usa el enrutador de publicaciones en una ruta específica
-app.use('/api/posts', postRouter);
+app.get('/api/data', async (req, res) => {
+  try {
+    const cursor = await db.query(aql`FOR doc IN users RETURN doc`);
+    const data = await cursor.all();
+    res.json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
