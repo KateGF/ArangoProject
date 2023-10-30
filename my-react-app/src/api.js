@@ -17,3 +17,11 @@ export const createPost = (post) => api.post('/posts', post);
 export const updatePost = (id, post) => api.put(`/posts/${id}`, post);
 export const deletePost = (id) => api.delete(`/posts/${id}`);
 
+
+// Usuarios
+export const getUsers = () => api.get('/users');
+export const getUser = (id, user) => api.get(`/users${id}`, user);
+export const createUser = (user) => api.post('/users', user);
+export const updateUser = (id, user) => api.put(`/users/${id}`, user);
+export const deleteUser = (id) => api.delete(`/users/${id}`);
+

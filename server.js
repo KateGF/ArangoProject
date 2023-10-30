@@ -89,6 +89,7 @@ app.delete('/api/comments/:id', async (req, res) => {
   }
 });
 
+
 // Create Post
 app.post('/api/posts', async (req, res) => {
   const post = req.body;
@@ -148,6 +149,71 @@ app.delete('/api/posts/:id', async (req, res) => {
   } catch (error) {
     console.error('Error deleting post:', error);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+// Controladores para operaciones CRUD de usuarios
+// Crear un usuario
+app.post('/api/users', async (req, res) => {
+  try {
+    const userData = req.body;
+    const result = await usersCollection.save(userData);
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// Obtener todos los usuarios
+app.get('/api/users', async (req, res) => {
+  try {
+    const cursor = await db.query(aql`
+      FOR user IN ${usersCollection}
+      RETURN user
+    `);
+    const users = await cursor.all();
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// Obtener un usuario por ID
+app.get('/api/users/:id', async (req, res) => {
+  try {
+    const user = await usersCollection.document(req.params.id);
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// Actualizar un usuario por ID
+app.put('/api/users/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const updatedData = req.body;
+    await usersCollection.update(userId, updatedData);
+    res.json({ message: 'Usuario actualizado exitosamente' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// Eliminar un usuario por ID
+app.delete('/api/users/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    await usersCollection.remove(userId);
+    res.json({ message: 'Usuario eliminado exitosamente' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
