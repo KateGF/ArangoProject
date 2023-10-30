@@ -55,6 +55,10 @@ function App() {
     }
   };
 
+  const handleLogin = () => {
+    
+  };
+
   useEffect(() => {
     fetchComments();
   }, []);
@@ -90,7 +94,11 @@ function App() {
             </>
           )}
           <button onClick={() => handleDeleteComment(comment._key)}>Delete</button>
+          <div>
+          <button onClick={() => handleLogin}>Login</button>
         </div>
+        </div>
+        
       ))}
     </div>
   );
