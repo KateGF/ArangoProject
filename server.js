@@ -13,7 +13,7 @@ db.useBasicAuth('root', '1234');
 app.use(express.json());
 
 // Create
-app.post('/api/data', async (req, res) => {
+app.post('/api/comments', async (req, res) => {
   // Validate the request body
   const comment = req.body;
   console.log('Creating comment:', comment);
@@ -30,7 +30,7 @@ app.post('/api/data', async (req, res) => {
 });
 
 // Read
-app.get('/api/data', async (req, res) => {
+app.get('/api/comments', async (req, res) => {
   try {
     const cursor = await db.query('FOR doc IN comments RETURN doc');
     const data = await cursor.all();
@@ -42,7 +42,7 @@ app.get('/api/data', async (req, res) => {
 });
 
 // Update
-app.put('/api/data/:id', async (req, res) => {
+app.put('/api/comments/:id', async (req, res) => {
   // Validate the request body
   const comment = req.body;
   console.log(`Updating comment with ID: ${req.params.id}, Text: ${comment.text}`);
@@ -65,7 +65,7 @@ app.put('/api/data/:id', async (req, res) => {
 });
 
 // Delete
-app.delete('/api/data/:id', async (req, res) => {
+app.delete('/api/comments/:id', async (req, res) => {
   console.log(`Deleting comment with ID: ${req.params.id}`);
   // Delete the comment from the database
   try {
@@ -81,3 +81,4 @@ app.delete('/api/data/:id', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+

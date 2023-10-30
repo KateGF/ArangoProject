@@ -6,6 +6,8 @@ function App() {
   const [newComment, setNewComment] = useState('');
   const [updatingComment, setUpdatingComment] = useState({ id: null, text: '' });
   const [error, setError] = useState(null);
+  const username = "katy";
+  const date = new Date().getDate().toLocaleString();
 
   const fetchComments = async () => {
     try {
@@ -19,7 +21,7 @@ function App() {
 
   const handleCreateComment = async () => {
     try {
-      await createComment({ text: newComment });
+      await createComment({ text: newComment, username: username, date: date});
       fetchComments();
       setNewComment('');
       setError(null);
