@@ -39,10 +39,6 @@ function App() {
     }
   };
 
-  const handleLogin = () => {
-    
-  };
-
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -61,8 +57,14 @@ function App() {
       <hr></hr>
       {error && <div className="error">{error}</div>}
 
+      {posts.map((post) => (
+        <div key={post._key} className="post-container">
+          <div className="post-content">
+            <span>{post.text}  <button onClick={() => handleDeletePost(post._key)}> Delete Post  </button></span>
+            <Comments postID={post._key}></Comments>
+
+          </div>
         </div>
-        
       ))}
 
     </div>
