@@ -3,17 +3,43 @@ import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import styles from "../../styles/styles.js"
 
+import { createUser } from '../../userConnection.js';
+
 function SignUp() {
     //Declaracion variables
     const navigate = useNavigate();
     const [nombre, setNombre] = useState("");
-    const [apellidos, setApellidos] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [usuario, setUsuario] = useState("");
+    const [correo, setCorreo] = useState("");
+    const [contrasenna, setContrasenna] = useState("");
     const [fechaNacimiento, setFechaNacimiento] = useState("");
     const [telefono, setTelefono] = useState("");
     const [genero, setGenero] = useState("");
     const [visible, setVisible] = useState(false);
+
+    const crearUsuario = async () => {
+
+        //Validar que el usuario exista
+
+        const data = {
+            //Cambiar campos y espacios variables reactivas
+            user: usuario,
+            name: nombre,
+            password: contrasenna,
+            dob: fechaNacimiento,
+            gender: genero,
+            email: correo,
+            phone: telefono
+        };
+        const responseRegistro = await createUser(data);
+        if (responseRegistro) {
+            navigate('/', {});
+        } else {
+            alert("Error al registrarse");
+        }
+
+    }
+
 
     return (
         <div >
@@ -42,12 +68,12 @@ function SignUp() {
                                         className='appearance-none block w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green focus:border-green sm:text-sm' />
                                     <br />
 
-                                    <label htmlFor='text' className='block text-sm text-gray-100'>Apellidos</label>
+                                    <label htmlFor='text' className='block text-sm text-gray-100'>Usuario</label>
                                     <input
                                         name='apellidos'
                                         type='text'
-                                        required value={apellidos}
-                                        onChange={(e) => setApellidos(e.target.value)}
+                                        required value={usuario}
+                                        onChange={(e) => setUsuario(e.target.value)}
                                         className='appearance-none block w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green focus:border-green sm:text-sm' />
                                     <br />
 
@@ -59,8 +85,8 @@ function SignUp() {
                                             name='email'
                                             type='email'
                                             autoComplete='email'
-                                            required value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
+                                            required value={correo}
+                                            onChange={(e) => setCorreo(e.target.value)}
                                             className='appearance-none block w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green focus:border-green sm:text-sm' />
                                     </div>
                                     <br />
@@ -73,8 +99,8 @@ function SignUp() {
                                             name='password'
                                             type={visible ? "text" : "password"}
                                             autoComplete='current-password'
-                                            required value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
+                                            required value={contrasenna}
+                                            onChange={(e) => setContrasenna(e.target.value)}
                                             className='appearance-none block w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green focus:border-green sm:text-sm' />
                                         {
                                             visible ? (
@@ -112,7 +138,7 @@ function SignUp() {
 
                                     <label htmlFor='text' className='block text-sm text-gray-100'>Género</label>
                                     <select id="genero" class="'appearance-none block w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green focus:border-green sm:text-sm">
-                                        <option selected>Seleccione un género</option>
+                                        <option selected genero={genero} onChange={(e) => setGenero(e.target.value)} >Seleccione un género</option>
                                         <option value="F">Femenino</option>
                                         <option value="M">Masculino</option>
                                     </select>
@@ -123,6 +149,7 @@ function SignUp() {
                                     <div>
                                         <button
                                             type="submit"
+                                            onClick={crearUsuario}
                                             className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-green">
                                             Registrarse
                                         </button>
