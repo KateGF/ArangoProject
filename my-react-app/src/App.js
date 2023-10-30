@@ -1,33 +1,58 @@
-// my-react-app/src/App.js
 import React, { useState, useEffect } from 'react';
 import { getComments, createComment, updateComment, deleteComment } from './api';
-
 
 function App() {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [updatingComment, setUpdatingComment] = useState({ id: null, text: '' });
+  const [error, setError] = useState(null);
 
   const fetchComments = async () => {
-    const response = await getComments();
-    setComments(response.data);
+    try {
+      const response = await getComments();
+      setComments(response.data);
+      setError(null);
+    } catch (error) {
+      setError("Error al cargar comentarios. Por favor, inténtalo de nuevo.");
+    }
   };
 
   const handleCreateComment = async () => {
-    await createComment({ text: newComment });
-    fetchComments();
-    setNewComment('');
+    try {
+      await createComment({ text: newComment });
+      fetchComments();
+      setNewComment('');
+      setError(null);
+    } catch (error) {
+      setError("Error al crear un comentario. Por favor, inténtalo de nuevo.");
+    }
   };
 
   const handleUpdateComment = async () => {
-    await updateComment(updatingComment.id, { text: updatingComment.text });
-    fetchComments();
-    setUpdatingComment({ id: null, text: '' });
+    if (updatingComment.id) {
+      try {
+        // Realiza la llamada a la API para actualizar el comentario
+        await updateComment(updatingComment.id, { text: updatingComment.text });
+  
+        // Limpia el estado de updatingComment y recarga los comentarios
+        setUpdatingComment({ id: null, text: '' });
+        fetchComments();
+        setError(null);
+      } catch (error) {
+        setError("Error al actualizar el comentario. Por favor, inténtalo de nuevo.");
+      }
+    }
   };
+  
 
   const handleDeleteComment = async (id) => {
-    await deleteComment(id);
-    fetchComments();
+    try {
+      await deleteComment(id);
+      fetchComments();
+      setError(null);
+    } catch (error) {
+      setError("Error al eliminar el comentario. Por favor, inténtalo de nuevo.");
+    }
   };
 
   useEffect(() => {
@@ -36,7 +61,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>CRUD App</h1>
+      <h1>Create Comment</h1>
       <input
         type="text"
         placeholder="New Comment"
@@ -44,6 +69,8 @@ function App() {
         onChange={(e) => setNewComment(e.target.value)}
       />
       <button onClick={handleCreateComment}>Create</button>
+
+      {error && <div className="error">{error}</div>}
 
       {comments.map((comment) => (
         <div key={comment._key}>
