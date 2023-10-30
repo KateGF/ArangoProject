@@ -12,14 +12,18 @@ db.useBasicAuth('root', '1234');
 
 app.use(express.json());
 
-// Create
-app.post('/api/data', async (req, res) => {
+// Create Comment for a Specific Post
+app.post('/api/posts/:id/comments', async (req, res) => {
   // Validate the request body
+  const postId = req.params.id;
   const comment = req.body;
-  console.log('Creating comment:', comment);
+  console.log(`Creating comment for post ${postId}:`, comment);
 
   // Save the comment to the database
   try {
+    // Assuming you have a field in the comment object to store the associated post ID
+    comment.postId = postId;
+
     await db.collection('comments').save(comment);
     console.log('Comment created successfully');
     res.json(comment);
@@ -29,11 +33,17 @@ app.post('/api/data', async (req, res) => {
   }
 });
 
-// Read
-app.get('/api/data', async (req, res) => {
+
+app.get('/api/posts/:id/comments', async (req, res) => {
+  const postId = req.params.id;
+
   try {
-    const cursor = await db.query('FOR doc IN comments RETURN doc');
+    const cursor = await db.query(
+      'FOR doc IN comments FILTER doc.postId == @postId RETURN doc',
+      { postId }
+    );
     const data = await cursor.all();
+    console.log(data);
     res.json(data);
   } catch (error) {
     console.error(error);
@@ -41,8 +51,9 @@ app.get('/api/data', async (req, res) => {
   }
 });
 
+
 // Update
-app.put('/api/data/:id', async (req, res) => {
+app.put('/api/comments/:id', async (req, res) => {
   // Validate the request body
   const comment = req.body;
   console.log(`Updating comment with ID: ${req.params.id}, Text: ${comment.text}`);
@@ -65,7 +76,7 @@ app.put('/api/data/:id', async (req, res) => {
 });
 
 // Delete
-app.delete('/api/data/:id', async (req, res) => {
+app.delete('/api/comments/:id', async (req, res) => {
   console.log(`Deleting comment with ID: ${req.params.id}`);
   // Delete the comment from the database
   try {
@@ -78,6 +89,68 @@ app.delete('/api/data/:id', async (req, res) => {
   }
 });
 
+
+// Create Post
+app.post('/api/posts', async (req, res) => {
+  const post = req.body;
+  console.log('Creating post:', post);
+
+  try {
+    await db.collection('posts').save(post);
+    console.log('Post created successfully');
+    res.json(post);
+  } catch (error) {
+    console.error('Error creating post:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Read Posts
+app.get('/api/posts', async (req, res) => {
+  try {
+    const cursor = await db.query('FOR doc IN posts RETURN doc');
+    const data = await cursor.all();
+    res.json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Update Post
+app.put('/api/posts/:id', async (req, res) => {
+  const post = req.body;
+  console.log(`Updating post with ID: ${req.params.id}, Text: ${post.text}`);
+
+  try {
+    const result = await db.query({
+      query: `
+        UPDATE { _key: @key } WITH { text: @text } IN posts RETURN NEW
+      `,
+      bindVars: { key: req.params.id, text: post.text }
+    });
+
+    console.log('Post updated successfully');
+    res.json(result._result);
+  } catch (error) {
+    console.error('Error updating post:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Delete Post
+app.delete('/api/posts/:id', async (req, res) => {
+  console.log(`Deleting post with ID: ${req.params.id}`);
+
+  try {
+    await db.collection('posts').remove(req.params.id);
+    console.log('Post deleted successfully');
+    res.json({ message: 'Post deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting post:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
 // Controladores para operaciones CRUD de usuarios
@@ -143,7 +216,6 @@ app.delete('/api/users/:id', async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
-
 
 
 app.listen(port, () => {
