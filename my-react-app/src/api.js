@@ -5,7 +5,6 @@ const api = axios.create({
   baseURL: 'http://localhost:3000/api',
 });
 
-
 // Comments related endpoints
 export const getComments = (idPost) => api.get(`/posts/${idPost}/comments`);
 export const createComment = (idPost, comment) => api.post(`/posts/${idPost}/comments`, comment);
