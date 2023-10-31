@@ -1,7 +1,7 @@
 const express = require('express');
 const { Database } = require('arangojs');
 const app = express();
-const port = 3000;
+const port = 3001;
 
 // Habilita CORS permitiendo todas las solicitudes de origen (esto puede ser ajustado según tus necesidades)
 const cors = require('cors');

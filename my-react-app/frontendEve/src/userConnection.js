@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const baseURL = 'http://localhost:8529/_db/_system'; // Reemplaza 'your_database_name' con el nombre de tu base de datos ArangoDB
+const baseURL = 'http://localhost:3001'; // Reemplaza 'your_database_name' con el nombre de tu base de datos ArangoDB
 
 // Función para crear un usuario en ArangoDB
 const createUser = async (userData) => {
   try {
-    const response = await axios.post(`${baseURL}/_api/users`, userData);
+    const response = await axios.post(`${baseURL}/api/users`, userData);
 
     if (response.status === 201) {
       return true; // Usuario creado exitosamente

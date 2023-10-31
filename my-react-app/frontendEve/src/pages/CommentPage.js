@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getPosts, createPost, deletePost } from './api';
 import Comments from './Comments';
+import './App.css';
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -46,7 +47,7 @@ function App() {
   return (
     <div className="App">
       <h1>Create Post</h1>
-      <br></br>
+      <br />
       <input
         type="text"
         placeholder="New Post"
@@ -54,19 +55,18 @@ function App() {
         onChange={(e) => setNewPost(e.target.value)}
       />
       <button onClick={handleCreatePost}>Create</button>
-      <hr></hr>
+      <hr />
       {error && <div className="error">{error}</div>}
 
       {posts.map((post) => (
         <div key={post._key} className="post-container">
           <div className="post-content">
-            <span>{post.text}  <button onClick={() => handleDeletePost(post._key)}> Delete Post  </button></span>
-            <Comments postID={post._key}></Comments>
-
+            <span>{post.text}</span>
+            <button onClick={() => handleDeletePost(post._key)}>Delete Post</button>
           </div>
+          <Comments postID={post._key} />
         </div>
       ))}
-
     </div>
   );
 }
