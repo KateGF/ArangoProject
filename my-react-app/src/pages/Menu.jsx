@@ -6,20 +6,16 @@ function Menu() {
     //Declaracion variables
     const navigate = useNavigate();
 
-    const handleEditar = () => {
-        //navigate('/url', {});
-    }
-
-    const handleEliminar = () => {
-        //navigate('/url', {});
+    const handleAdminCuenta = () => {
+        navigate('/adminCuenta', {});
     }
 
     const handleAmigos = () => {
-        //navigate('/url', {});
+        navigate('/Amigos', {});
     }
 
-    const handleComentarios = () => {
-        //navigate('/url', {});
+    const handlePublicacion = () => {
+        navigate('/publicacion', {});
     }
 
     const handleLogOut = () => {
@@ -41,19 +37,15 @@ function Menu() {
                     <div className='bg-darkGreen py-4 px-6 shadow sm:rounded-lg sm:px-10'>
                         
                             <div>
-                                <h1  className='mt-6 text-center text-4xl font-semibold text-white'>
+                                <h1  className='mt-8 text-center text-4xl font-semibold text-white'>
                                     Menú
                                 </h1>
                             </div>
                             <div className='bg-darkGreen py-8 px-6 shadow sm:rounded-lg sm:px-10'>
-                                <div>
+                                <div><br/>
                                     
-                                    <button onClick={handleEditar} className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-green">
-                                        Editar Cuenta
-                                    </button><br/> 
-
-                                    <button onClick={handleEliminar} className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-green">
-                                        Eliminar Cuenta
+                                    <button onClick={handleAdminCuenta} className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-green">
+                                        Administrar Cuenta
                                     </button><br/> 
 
                                     <button onClick={handleAmigos} className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-green">
@@ -61,15 +53,15 @@ function Menu() {
                                     </button>
                                     <br/> 
 
-                                    <button onClick={handleComentarios} className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-green">
-                                        Comentarios
+                                    <button onClick={handlePublicacion} className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-green">
+                                        Publicación
                                     </button>
                                     <br/> 
                                 
                                     <button onClick={handleLogOut} className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-green">
                                         Cerrar Sesión
                                     </button>
-                                </div> 
+                                </div><br/>
                             </div>
                     </div>
             </div>        
