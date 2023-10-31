@@ -40,7 +40,7 @@ function Login() {
                 </div>
                 <div className='bg-darkGreen flex flex-col justify-center py-4 sm:px-6 lg:px-8'></div>
                 <div class="bg-[url('https://images.alphacoders.com/132/1324775.png')] bg-no-repeat bg-cover bg-center bg-fixed w-full">
-                    <div className="my-60  sm:mx-auto sm:w-full sm:max-w-md">
+                    <div className="my-20  sm:mx-auto sm:w-full sm:max-w-md">
                         <div className='bg-darkGreen bg-opacity-75 py-4 px-6 shadow sm:rounded-lg sm:px-10'>
                             <form className="space-y-10" onSubmit={handleLogin}>
                                 <div>

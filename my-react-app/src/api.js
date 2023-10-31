@@ -30,5 +30,10 @@ export const getFriends = (userId) => api.get(`/friends/${userId}`);
 export const addFriend = (userId, friendData) => api.post(`/friends/${userId}`, friendData);
 export const updateFriend = (friendId, friendData) => api.put(`/friends/${friendId}`, friendData);
 export const deleteFriend = (friendId) => api.delete(`/friends/${friendId}`);
+export const searchFriends = (userID, searchTerm) => {
+  return api.get(`/friends/${userID}/search`, { params: { searchTerm } });
+};
 
-
+export const acceptFriendship = (userID, friendID) => {
+  return api.put(`/friends/${userID}/accept/${friendID}`);
+};

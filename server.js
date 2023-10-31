@@ -220,6 +220,67 @@ app.delete('/api/friends/:friendId', async (req, res) => {
   }
 });
 
+// Endpoint to search friends
+app.get('/api/friends/search/:friendId', async (req, res) => {
+  const friendId = req.params.friendId;
+
+  try {
+    const cursor = await db.query(aql`
+      FOR doc IN is_friend
+        FILTER doc._from == ${`users/${friendId}`}
+        RETURN doc
+    `);
+
+    const data = await cursor.all();
+
+    res.json(data);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint to accept friendship
+app.put('/api/friends/accept/:friendId', async (req, res) => {
+  const friendId = req.params.friendId;
+
+  try {
+    const doc = await db.collection('is_friend').document(friendId);
+    // Update the status or perform any necessary operations to accept the friendship
+    // Example: doc.status = 'accepted';
+    await db.collection('is_friend').update(friendId, doc);
+
+    res.json({ message: 'Friendship accepted successfully' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint to search friends
+app.get('/api/friends/:userId/search', async (req, res) => {
+  const userId = req.params.userId;
+  const searchTerm = req.query.searchTerm;
+
+  try {
+    const cursor = await db.query({
+      query: `
+        FOR doc IN is_friend
+          FILTER doc._from == @userId && CONTAINS(doc.user, @searchTerm)
+          RETURN doc
+      `,
+      bindVars: { userId: `users/${userId}`, searchTerm }
+    });
+
+    const data = await cursor.all();
+
+    res.json(data);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Controladores para operaciones CRUD de usuarios
 // Crear un usuario
 app.post('/api/users', async (req, res) => {
