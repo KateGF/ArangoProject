@@ -7,7 +7,6 @@ module.exports = {
       Poppins: ["Poppins", "sans-serif"]
     },
     extend: {
-
       colors: {
         'darkGreen': '#042f2e',
         'medGreen': '#115e59',
