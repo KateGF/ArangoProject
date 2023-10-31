@@ -70,11 +70,11 @@ function Posts({ }) {
 
     return (
         <div className="grid-container">
-            <div className="friends-column">
+            <div className="creates-column">
 
                 <h1>Create Post</h1>
                 <input
-                    className='appearance-none block w-full  border border-gray-200 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green focus:border-green sm:text-sm'
+                    className='appearance-none block w-full  px-3 py-2  border border-gray-200 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green focus:border-green sm:text-sm'
                     type="text"
                     placeholder="New Post"
                     value={newPost}
@@ -82,13 +82,13 @@ function Posts({ }) {
                 />
                 <button className="group relative  h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-green float-right" onClick={handleCreatePost}>Create</button>
 
-                <Friends userID={stateFromPosts.userId}></Friends>
+
             </div>
             <div className="posts-column">
 
                 {error && <div className="error">{error}</div>}
                 {posts.map((post) => (
-                    <div key={post._key} className="post-container py-10">
+                    <div key={post._key} className="post-container py-5 border border-gray-200 rounded-md">
                         <h2 className='text-center'> | {post._key} | {post.text} |  <span>
                             <button className="bg-red-500 float-right text-white rounded-md py-1 px-2"
                                 onClick={() => handleDeletePost(post._key)}> Delete </button>
@@ -96,10 +96,13 @@ function Posts({ }) {
                         </span></h2>
                         <div className="post-content">
                             <Comments postID={post._key}></Comments>
-                            <hr></hr>
+
                         </div>
                     </div>
                 ))}
+            </div>
+            <div className="friends-column">
+                <Friends userID={stateFromPosts.userId}></Friends>
             </div>
         </div>
 
