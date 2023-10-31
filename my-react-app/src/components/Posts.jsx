@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Comments from './Comments';
-import { getPosts, createPost, deletePost, fetchPostsByUsername, fetchPostByFriend } from '../api';
+import { deletePost, fetchPostByFriend } from '../api';
 import Friends from './Friends';
 import { useLocation } from 'react-router-dom';
+import MyPosts from './MyPosts';
 
 
 function Posts({ }) {
@@ -12,35 +13,8 @@ function Posts({ }) {
     const stateFromPosts = location.state;
 
     const [posts, setPosts] = useState([]);
-    const [newPost, setNewPost] = useState('');
     const [error, setError] = useState(null);
 
-
-    const fetchPosts = async () => {
-        try {
-            const response = await getPosts();
-            setPosts(response.data);
-            setError(null);
-        } catch (error) {
-            setError("Error al cargar publicaciones. Por favor, inténtalo de nuevo.");
-        }
-    };
-
-    const fetchPostsByUser = async () => {
-
-        if (stateFromPosts) {
-            try {
-                const response = await fetchPostsByUsername(stateFromPosts.username);
-                setPosts(response.data);
-                setError(null);
-            } catch (error) {
-                setError("Error al cargar publicaciones. Por favor, inténtalo de nuevo.");
-            }
-        } else {
-            setError("Ups, perdí las credenciales. Deberás iniciar sesión de nuevo.");
-        }
-
-    };
 
     const fetchPostsByFriends = async () => {
 
@@ -59,22 +33,12 @@ function Posts({ }) {
 
     };
 
-    const handleCreatePost = async () => {
 
-        try {
-            await createPost({ text: newPost, user: stateFromPosts.username });
-            fetchPostsByUser();
-            setNewPost('');
-            setError(null);
-        } catch (error) {
-            setError("Error al crear una publicación. Por favor, inténtalo de nuevo.");
-        }
-    };
 
     const handleDeletePost = async (id) => {
         try {
             await deletePost(id);
-            fetchPostsByUser();
+            fetchPostsByFriends();
             setError(null);
         } catch (error) {
             setError("Error al eliminar la publicación. Por favor, inténtalo de nuevo.");
@@ -82,30 +46,24 @@ function Posts({ }) {
     };
 
     useEffect(() => {
+
         fetchPostsByFriends();
+
     }, []);
 
     return (
         <div className="grid-container">
             <div className="creates-column">
 
-                <h1>Create Post</h1>
-                <input
-                    className='appearance-none block w-full  px-3 py-2  border border-gray-200 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green focus:border-green sm:text-sm'
-                    type="text"
-                    placeholder="New Post"
-                    value={newPost}
-                    onChange={(e) => setNewPost(e.target.value)}
-                />
-                <button className="group relative  h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-green float-right" onClick={handleCreatePost}>Create</button>
 
+                <MyPosts id={stateFromPosts.userId} username={stateFromPosts.username}></MyPosts>
 
             </div>
             <div className="posts-column">
 
                 {error && <div className="error">{error}</div>}
                 {posts && posts.length > 0 ? (
-                    posts.map((post) => (
+                    posts[0].map((post) => (
                         <div key={post._key} className="post-container py-5 border border-gray-200 rounded-md">
                             <h2 className='text-center'>
                                 Author: {post.user}
