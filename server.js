@@ -2,7 +2,7 @@ const express = require('express');
 const { Database } = require('arangojs');
 const app = express();
 const port = 3000;
-
+const { aql } = require('arangojs');
 // Habilita CORS permitiendo todas las solicitudes de origen (esto puede ser ajustado según tus necesidades)
 const cors = require('cors');
 app.use(cors());
@@ -181,16 +181,42 @@ app.get('/api/friends/:userId', async (req, res) => {
 const friendsCollection = db.collection('is_friend');
 const usersCollection = db.collection('users');
 
+// agregar amigo 
+app.post('/api/friends/:user1/:user2', async (req, res) => {
+  const user1 = req.params.user1;
+  const user2Username = req.params.user2;
 
-app.post('/api/friends/:userId', async (req, res) => {
-  const userId = req.params.userId;
-  const friendData = req.body;
-  friendData.userId = userId;
   try {
-    const result = await friendsCollection.save(friendData);
-    res.json(result);
+    
+    // Buscar el usuario correspondiente a user1 y user2
+    const user1Document = await usersCollection.document(user1);
+    const user2Document = await usersCollection.firstExample({ user: user2Username });
+
+    if (!user1Document || !user2Document) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+    }
+
+    // Obtener el _id de los usuarios
+    const user1Id = user1Document._id;
+    const user2Id = user2Document._id;
+
+    const result = await db.query({
+      query: `
+        INSERT { _from: @user1, _to: @user2 , status: "accepted"} INTO is_friend
+        RETURN NEW
+      `,
+      bindVars: { user1: user1Id, user2: user2Id }
+    });
+    
+    let newFriendship;
+    if (result._documents && result._documents.length > 0) {
+      newFriendship = result._documents[0];
+    }
+    
+    res.json({ success: true, message: 'Relación de amistad agregada correctamente', data: newFriendship });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error al agregar relación de amistad:', error);
+    res.status(500).json({ success: false, message: 'Hubo un error al agregar la relación de amistad' });
   }
 });
 
@@ -205,6 +231,8 @@ app.put('/api/friends/:friendId', async (req, res) => {
   }
 });
 
+
+
 app.delete('/api/friends/:friendId', async (req, res) => {
   const friendId = req.params.friendId;
   try {
@@ -214,6 +242,58 @@ app.delete('/api/friends/:friendId', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+// mi busqueda
+app.get('/api/friends2/:userID', async (req, res) => {
+ 
+  const userID = req.params.userID;
+
+  try {
+    console.log(userID);
+    const cursor = await db.query(aql`
+    FOR friend IN is_friend
+    FILTER friend._from == ${`users/${userID}`}
+    LET user = DOCUMENT(friend._to)
+    RETURN user
+    `);
+   
+    const data = await cursor.all();
+   
+    console.log(JSON.stringify(data));
+    res.json(data);
+   
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Endpoint to search friends
 app.get('/api/friends/search/:friendId', async (req, res) => {
