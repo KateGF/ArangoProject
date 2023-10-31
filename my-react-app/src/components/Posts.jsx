@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Comments from './Comments';
-import { getPosts, createPost, deletePost, fetchPostsByUsername } from '../api';
+import { getPosts, createPost, deletePost, fetchPostsByUsername, fetchPostByFriend } from '../api';
 import Friends from './Friends';
 import { useLocation } from 'react-router-dom';
 
@@ -42,6 +42,23 @@ function Posts({ }) {
 
     };
 
+    const fetchPostsByFriends = async () => {
+
+        if (stateFromPosts) {
+            try {
+                const response = await fetchPostByFriend(stateFromPosts.userId);
+                setPosts(response.data);
+                console.log(response.data)
+                setError(null);
+            } catch (error) {
+                setError("Error al cargar publicaciones. Por favor, inténtalo de nuevo.");
+            }
+        } else {
+            setError("Ups, perdí las credenciales. Deberás iniciar sesión de nuevo.");
+        }
+
+    };
+
     const handleCreatePost = async () => {
 
         try {
@@ -65,7 +82,7 @@ function Posts({ }) {
     };
 
     useEffect(() => {
-        fetchPostsByUser();
+        fetchPostsByFriends();
     }, []);
 
     return (
@@ -87,24 +104,28 @@ function Posts({ }) {
             <div className="posts-column">
 
                 {error && <div className="error">{error}</div>}
-                {posts.map((post) => (
-    <div key={post._key} className="post-container py-5 border border-gray-200 rounded-md">
-        <h2 className='text-center'>
-           
-             Author: {post.user} 
-        </h2>
-        <p className="post-text">{post.text}</p>
-        <div className="post-content">
-            <Comments postID={post._key}></Comments>
-            <button
-                className="bg-red-500 text-white rounded-md py-1 px-2 mt-2"
-                onClick={() => handleDeletePost(post._key)}
-            >
-                Delete
-            </button>
-        </div>
-    </div>
-))}
+                {posts && posts.length > 0 ? (
+                    posts.map((post) => (
+                        <div key={post._key} className="post-container py-5 border border-gray-200 rounded-md">
+                            <h2 className='text-center'>
+                                Author: {post.user}
+                            </h2>
+                            <p className="post-text">{post.text}</p>
+                            <div className="post-content">
+                                <Comments postID={post._key}></Comments>
+                                <button
+                                    className="bg-red-500 text-white rounded-md py-1 px-2 mt-2"
+                                    onClick={() => handleDeletePost(post._key)}
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="no-posts-message">No posts found for friends</div>
+                )}
+
             </div>
             <div className="friends-column">
                 <Friends userID={stateFromPosts.userId}></Friends>

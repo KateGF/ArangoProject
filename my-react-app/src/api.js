@@ -17,6 +17,8 @@ export const createPost = (post) => api.post('/posts', post);
 export const updatePost = (id, post) => api.put(`/posts/${id}`, post);
 export const deletePost = (id) => api.delete(`/posts/${id}`);
 export const fetchPostsByUsername = (user) => api.get(`/posts/by-user/${user}`);
+export const fetchPostByFriend = (id) => api.get(`/posts/by-friends/${id}`);
+
 // Usuarios
 export const getUsers = () => api.get('/users');
 export const getUser = (id, user) => api.get(`/users${id}`, user);
