@@ -8,7 +8,7 @@ import { getUsers, getUser, createUser, updateUser, deleteUser} from '../../user
 function Login() {
     //Declaracion variables
     const navigate = useNavigate();
-    const [email, setEmail] = useState("");
+    const [usuario, setUsuario] = useState("");
     const [password, setPassword] = useState("");
     const [visible, setVisible] = useState(false);
 
@@ -32,16 +32,16 @@ function Login() {
                                 </h1>
                             </div>
                             <div className=''>
-                                <label htmlFor='email' className='block text-sm text-gray-100'>
-                                    Correo Electrónico
+                                <label htmlFor='usuario' className='block text-sm text-gray-100'>
+                                    Usuario
                                 </label>
                                 <div className='mt-1'>
                                     <input 
                                     name='email' 
                                     type='email' 
                                     autoComplete='email' 
-                                    required value={email} 
-                                    onChange={(e) => setEmail(e.target.value)} 
+                                    required value={usuario} 
+                                    onChange={(e) => setUsuario(e.target.value)} 
                                     className = 'appearance-none block w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green focus:border-green sm:text-sm'/>
                                 </div>
                                 <br/>
