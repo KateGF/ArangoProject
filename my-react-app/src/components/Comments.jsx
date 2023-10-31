@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { createComment, deleteComment, getComments } from './api';
+import { createComment, deleteComment, getComments } from '../api';
 function Comments({ postID }) {
     const [comments, setComments] = useState({});
     const [error, setError] = useState(null);
