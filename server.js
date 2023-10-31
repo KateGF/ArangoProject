@@ -158,7 +158,7 @@ app.delete('/api/posts/:id', async (req, res) => {
 app.post('/api/users', async (req, res) => {
   try {
     const userData = req.body;
-    const result = await usersCollection.save(userData);
+    const result = await db.collection('users').save(userData);
     res.json(result);
   } catch (error) {
     console.error(error);
