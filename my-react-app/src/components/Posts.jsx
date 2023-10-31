@@ -88,18 +88,23 @@ function Posts({ }) {
 
                 {error && <div className="error">{error}</div>}
                 {posts.map((post) => (
-                    <div key={post._key} className="post-container py-5 border border-gray-200 rounded-md">
-                        <h2 className='text-center'> | {post._key} | {post.text} |  <span>
-                            <button className="bg-red-500 float-right text-white rounded-md py-1 px-2"
-                                onClick={() => handleDeletePost(post._key)}> Delete </button>
-
-                        </span></h2>
-                        <div className="post-content">
-                            <Comments postID={post._key}></Comments>
-
-                        </div>
-                    </div>
-                ))}
+    <div key={post._key} className="post-container py-5 border border-gray-200 rounded-md">
+        <h2 className='text-center'>
+           
+             Author: {post.user} 
+        </h2>
+        <p className="post-text">{post.text}</p>
+        <div className="post-content">
+            <Comments postID={post._key}></Comments>
+            <button
+                className="bg-red-500 text-white rounded-md py-1 px-2 mt-2"
+                onClick={() => handleDeletePost(post._key)}
+            >
+                Delete
+            </button>
+        </div>
+    </div>
+))}
             </div>
             <div className="friends-column">
                 <Friends userID={stateFromPosts.userId}></Friends>
