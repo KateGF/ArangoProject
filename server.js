@@ -225,7 +225,46 @@ app.get('/api/friends/:userId', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
+app.get('/api/posts/by-friends/:id', async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const getFriendsQ = await db.query(
+      `
+      FOR doc IN is_friend
+        FILTER doc._from == @userId
+        FOR user IN users
+          FILTER user._id == doc._to
+          RETURN { id: doc._key, user: user.user, status: doc.status }
+      `,
+      { userId: `users/${userId}` }
+    );
+    const friends = await getFriendsQ.all();
+    console.log("All my friends" + friends);
+    if (friends.length === 0) {
+      return res.json({ message: 'No friends found' });
+    }
+    const allPostsByFriends = [];
+    for (const friend of friends) {
+      console.log("For" + friend.user);
+      const postsQ = await db.query(
+        'FOR doc IN posts FILTER doc.user == @user RETURN doc',
+        { user: friend.user }
+      );
+      const posts = await postsQ.all();
+      console.log("Posts: " + posts);
+      if (posts.length > 0) {
+        allPostsByFriends.push(posts);
+      }
+    }
+    if (allPostsByFriends.length === 0) {
+      return res.json({ message: 'No posts found for friends' });
+    }
+    res.json(allPostsByFriends);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
 // Define the friends collection
