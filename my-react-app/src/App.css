@@ -43,7 +43,7 @@ input[type=number] {
 
 .App {
   max-width: 600px;
-  margin: 0 auto;
+  margin: 10 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
 }
@@ -70,7 +70,7 @@ input[type=number] {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   /* Two columns */
-  gap: 20px;
+  gap: 60px;
   /* Adjust as needed */
   margin-top: 50px;
   /* Add margin at the top */

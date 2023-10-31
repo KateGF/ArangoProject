@@ -157,12 +157,12 @@ app.get('/api/friends/:userId', async (req, res) => {
 
   try {
     const cursor = await db.query(
-      'FOR doc IN is_friend FILTER doc._from == "users/' + userId + '" FOR user IN users FILTER user._id == doc._to RETURN user.username');
+      'FOR doc IN is_friend FILTER doc._from == "users/' + userId + '" FOR user IN users FILTER user._key == doc._to RETURN user.user');
     const data = await cursor.all();
 
     res.json(data);
   } catch (error) {
-
+    console.log(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

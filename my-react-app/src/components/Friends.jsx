@@ -10,7 +10,7 @@ function Friends({ userID }) {
 
     const fetchFriends = async () => {
         try {
-            const response = await getFriends(12623);
+            const response = await getFriends(userID);
             setFriends(response.data);
             setError(null);
         } catch (error) {
@@ -18,16 +18,13 @@ function Friends({ userID }) {
         }
     };
 
-
-
     useEffect(() => {
-
-        // fetchFriends();
+        fetchFriends();
     }, []);
 
     return (
 
-        <div className="App">
+        <div className="App ">
             <h1>Friends of User : {userID}</h1>
             {error && <div className="error">{error}</div>}
             {friends.map((friend) => (
