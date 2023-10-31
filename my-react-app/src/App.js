@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { getPosts, createPost, deletePost } from './api';
+import { getPosts, createPost, deletePost, getFriends } from './api';
 import Comments from './Comments';
 
 function App() {
   const [posts, setPosts] = useState([]);
+  const [friends, setFriends] = useState([]);
   const [newPost, setNewPost] = useState('');
 
   const [error, setError] = useState(null);
+
+  const fetchFriends = async () => {
+    try {
+      const response = await getFriends(12623);
+      setFriends(response.data);
+      setError(null);
+    }catch (error) {
+      setError("Error al cargar amigos. Por favor, inténtalo de nuevo.")
+    }
+  };
 
   const fetchPosts = async () => {
     try {
@@ -41,10 +52,18 @@ function App() {
 
   useEffect(() => {
     fetchPosts();
+    fetchFriends();
   }, []);
 
   return (
     <div className="App">
+      <h1>Friends</h1>
+      {friends.map((friend) => (
+        <div key={friend._key}>
+          <span>{friend}</span>
+        </div>
+      ))}
+      <hr></hr>
       <h1>Create Post</h1>
       <br></br>
       <input

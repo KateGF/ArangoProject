@@ -152,6 +152,22 @@ app.delete('/api/posts/:id', async (req, res) => {
   }
 });
 
+//Amigos Ale
+app.get('/api/friends/:userId', async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const cursor = await db.query(
+      'FOR doc IN is_friend FILTER doc._from == "users/' + userId + '" FOR user IN users FILTER user._id == doc._to RETURN user.username');
+    const data = await cursor.all();
+    console.log(data);
+    res.json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 // Controladores para operaciones CRUD de usuarios
 // Crear un usuario
@@ -205,6 +221,8 @@ app.put('/api/users/:id', async (req, res) => {
   }
 });
 
+
+
 // Eliminar un usuario por ID
 app.delete('/api/users/:id', async (req, res) => {
   try {
@@ -221,3 +239,4 @@ app.delete('/api/users/:id', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
