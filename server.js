@@ -157,7 +157,7 @@ app.get('/api/friends/:userId', async (req, res) => {
   try {
     const cursor = await db.query(
       `
-      FOR doc IN friend3
+      FOR doc IN is_friend
         FILTER doc._from == @userId
         FOR user IN users
           FILTER user._id == doc._to
@@ -178,7 +178,7 @@ app.get('/api/friends/:userId', async (req, res) => {
 
 
 // Define the friends collection
-const friendsCollection = db.collection('friend3');
+const friendsCollection = db.collection('is_friend');
 const usersCollection = db.collection('users');
 
 
@@ -221,7 +221,7 @@ app.get('/api/friends/search/:friendId', async (req, res) => {
 
   try {
     const cursor = await db.query(aql`
-      FOR doc IN friend3
+      FOR doc IN is_friend
         FILTER doc._from == ${`users/${friendId}`}
         RETURN doc
     `);
