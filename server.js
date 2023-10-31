@@ -151,13 +151,21 @@ app.delete('/api/posts/:id', async (req, res) => {
   }
 });
 
-//Amigos Ale
 app.get('/api/friends/:userId', async (req, res) => {
   const userId = req.params.userId;
 
   try {
     const cursor = await db.query(
-      'FOR doc IN is_friend FILTER doc._from == "users/' + userId + '" FOR user IN users FILTER user._key == doc._to RETURN user.user');
+      `
+      FOR doc IN friend3
+        FILTER doc._from == @userId
+        FOR user IN users
+          FILTER user._id == doc._to
+          RETURN { id: doc._key, user: user.user, status: doc.status }
+      `,
+      { userId: `users/${userId}` }
+    );
+
     const data = await cursor.all();
 
     res.json(data);
@@ -168,24 +176,11 @@ app.get('/api/friends/:userId', async (req, res) => {
 });
 
 
+
 // Define the friends collection
-const friendsCollection = db.collection('friends');
+const friendsCollection = db.collection('friend3');
 const usersCollection = db.collection('users');
-// Set up routes
-app.get('/api/friends/:userId', async (req, res) => {
-  const userId = req.params.userId;
-  try {
-    const cursor = await db.query(aql`
-      FOR friend IN ${friendsCollection}
-      FILTER friend.userId == ${userId}
-      RETURN friend
-    `);
-    const friends = await cursor.all();
-    res.json(friends);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+
 
 app.post('/api/friends/:userId', async (req, res) => {
   const userId = req.params.userId;
@@ -226,7 +221,7 @@ app.get('/api/friends/search/:friendId', async (req, res) => {
 
   try {
     const cursor = await db.query(aql`
-      FOR doc IN is_friend
+      FOR doc IN friend3
         FILTER doc._from == ${`users/${friendId}`}
         RETURN doc
     `);

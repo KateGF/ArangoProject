@@ -43,24 +43,28 @@ function Friends({ userID }) {
     return (
         <div className="App">
             <h1>Friends of User : {userID}</h1>
-            <div>
+
+            {error && <div className="error">{error}</div>}
+            {friends.map((friend) => (
+                <div key={friend.id}>
+                    <span>{friend.user}</span>
+                    {friend.status === 'requested' && (
+                        <button className="bg-green float-right text-white rounded-md py-1 px-2"
+                            onClick={() => handleAcceptFriendship(friend._key)}>Accept</button>
+                    )}
+                </div>
+            ))}
+            <hr></hr>
+            <div className='py-20'>
                 <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Search friends"
                 />
-                <button onClick={handleSearch}>Search</button>
+                <button className="bg-green float-right text-white rounded-md py-1 px-2"
+                    onClick={handleSearch}>Search</button>
             </div>
-            {error && <div className="error">{error}</div>}
-            {friends.map((friend) => (
-                <div key={friend._key}>
-                    <span>{friend.username}</span>
-                    {friend.status === 'requested' && (
-                        <button onClick={() => handleAcceptFriendship(friend._key)}>Accept</button>
-                    )}
-                </div>
-            ))}
         </div>
     );
 }
