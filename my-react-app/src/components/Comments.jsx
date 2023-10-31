@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { createComment, deleteComment, getComments } from './api';
-function Comments({ postID }) {
+import { createComment, deleteComment, getComments } from '../api';
+function Comments({ postID, username }) {
     const [comments, setComments] = useState({});
     const [error, setError] = useState(null);
     const [commentText, setCommentText] = useState('');
@@ -8,7 +8,7 @@ function Comments({ postID }) {
     const handleCreateComment = async (postId) => {
         try {
 
-            await createComment(postId, { text: commentText });
+            await createComment(postId, { text: commentText, username: username });
             fetchComments(postID);
             setCommentText('');
             setError(null);
@@ -33,7 +33,6 @@ function Comments({ postID }) {
     const fetchComments = async (idPost) => {
         try {
             const response = await getComments(idPost);
-            console.log(response);
             setComments(response.data);
             setError(null);
         } catch (error) {
@@ -51,17 +50,20 @@ function Comments({ postID }) {
 
             {Array.isArray(comments) && comments.map((comment) => (
                 <div key={comment._key} className="comment-container">
-                    <span>{comment.text}</span>
+                    <span>{comment.text} - {comment.username}</span>
                     <button onClick={() => handleDeleteComment(postID, comment._key)}>-</button>
                 </div>
             ))}
-            <div className="comment-input">
+            <div className="comment-input ">
                 <input
+                    className='appearance-none block w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green focus:border-green sm:text-sm'
                     type="text"
                     placeholder="Add a comment"
                     onChange={handleSetText}
                 />
-                <button onClick={() => handleCreateComment(postID)}>Add Comment</button>
+                <button className="bg-green float-right text-black rounded-md py-1 px-2"
+                    onClick={() => handleCreateComment(postID)}>Add Comment</button>
+                <br></br> <br></br>
             </div>
 
         </div>
