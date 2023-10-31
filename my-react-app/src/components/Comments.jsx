@@ -56,11 +56,13 @@ function Comments({ postID }) {
             ))}
             <div className="comment-input">
                 <input
+                    className='appearance-none block w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green focus:border-green sm:text-sm'
                     type="text"
                     placeholder="Add a comment"
                     onChange={handleSetText}
                 />
-                <button onClick={() => handleCreateComment(postID)}>Add Comment</button>
+                <button className="bg-green float-right text-black rounded-md py-1 px-2"
+                    onClick={() => handleCreateComment(postID)}>Add Comment</button>
             </div>
 
         </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getFriends } from '../api';
 
-function Posts({ userID }) {
+function Friends({ userID }) {
 
     const [friends, setFriends] = useState([]);
 
@@ -38,4 +38,4 @@ function Posts({ userID }) {
         </div>
     )
 }
-export default Posts;
+export default Friends;

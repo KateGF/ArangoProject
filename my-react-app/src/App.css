@@ -65,3 +65,15 @@ input[type=number] {
 .error {
   color: red;
 }
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  /* Two columns */
+  gap: 20px;
+  /* Adjust as needed */
+  margin-top: 50px;
+  /* Add margin at the top */
+  margin-left: 20px;
+  /* Add margin on the left */
+}
