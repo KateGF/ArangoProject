@@ -70,7 +70,7 @@ function Posts({ }) {
                             </h2>
                             <p className="post-text">{post.text}</p>
                             <div className="post-content">
-                                <Comments postID={post._key}></Comments>
+                                <Comments postID={post._key} username={stateFromPosts.username}></Comments>
 
                             </div>
                         </div>

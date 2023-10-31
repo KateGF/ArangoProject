@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createComment, deleteComment, getComments } from '../api';
-function Comments({ postID }) {
+function Comments({ postID, username }) {
     const [comments, setComments] = useState({});
     const [error, setError] = useState(null);
     const [commentText, setCommentText] = useState('');
@@ -8,7 +8,7 @@ function Comments({ postID }) {
     const handleCreateComment = async (postId) => {
         try {
 
-            await createComment(postId, { text: commentText });
+            await createComment(postId, { text: commentText, username: username });
             fetchComments(postID);
             setCommentText('');
             setError(null);
@@ -50,7 +50,7 @@ function Comments({ postID }) {
 
             {Array.isArray(comments) && comments.map((comment) => (
                 <div key={comment._key} className="comment-container">
-                    <span>{comment.text}</span>
+                    <span>{comment.text} - {comment.username}</span>
                     <button onClick={() => handleDeleteComment(postID, comment._key)}>-</button>
                 </div>
             ))}

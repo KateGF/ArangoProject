@@ -75,7 +75,7 @@ function MyPosts({ id, username }) {
                         </h2>
                         <p className="post-text">{post.text}</p>
                         <div className="post-content">
-                            <Comments postID={post._key}></Comments>
+                            <Comments postID={post._key} username={username}></Comments>
                             <button
                                 className="bg-red-500 text-white rounded-md py-1 px-2 mt-2"
                                 onClick={() => handleDeletePost(post._key)}
