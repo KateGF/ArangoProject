@@ -48,15 +48,9 @@ function Menu() {
                                         Administrar Cuenta
                                     </button><br/> 
 
-                                    <button onClick={handleAmigos} className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-green">
-                                        Amigos
-                                    </button>
-                                    <br/> 
+                                    
 
-                                    <button onClick={handlePublicacion} className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-green">
-                                        Publicación
-                                    </button>
-                                    <br/> 
+                            
                                 
                                     <button onClick={handleLogOut} className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-green">
                                         Cerrar Sesión
