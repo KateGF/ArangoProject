@@ -12,23 +12,19 @@ db.useBasicAuth('root', '1234');
 
 app.use(express.json());
 
-// Create Comment for a Specific Post
+
 app.post('/api/posts/:id/comments', async (req, res) => {
-  // Validate the request body
+
   const postId = req.params.id;
   const comment = req.body;
-  console.log(`Creating comment for post ${postId}:`, comment);
 
-  // Save the comment to the database
   try {
-    // Assuming you have a field in the comment object to store the associated post ID
     comment.postId = postId;
 
     await db.collection('comments').save(comment);
-    console.log('Comment created successfully');
     res.json(comment);
   } catch (error) {
-    console.error('Error creating comment:', error);
+
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -43,7 +39,21 @@ app.get('/api/posts/:id/comments', async (req, res) => {
       { postId }
     );
     const data = await cursor.all();
-    console.log(data);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/api/posts/by-user/:user', async (req, res) => {
+  const user = req.params.user;
+  try {
+    const cursor = await db.query(
+      'FOR doc IN posts FILTER doc.user == @user RETURN doc',
+      { user }
+    );
+    const data = await cursor.all();
+
     res.json(data);
   } catch (error) {
     console.error(error);
@@ -51,14 +61,10 @@ app.get('/api/posts/:id/comments', async (req, res) => {
   }
 });
 
-
-// Update
 app.put('/api/comments/:id', async (req, res) => {
-  // Validate the request body
-  const comment = req.body;
-  console.log(`Updating comment with ID: ${req.params.id}, Text: ${comment.text}`);
 
-  // Update the comment in the database
+  const comment = req.body;
+
   try {
     const result = await db.query({
       query: `
@@ -67,21 +73,17 @@ app.put('/api/comments/:id', async (req, res) => {
       bindVars: { key: req.params.id, text: comment.text }
     });
 
-    console.log('Comment updated successfully');
     res.json(result._result);
   } catch (error) {
-    console.error('Error updating comment:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
 // Delete
 app.delete('/api/comments/:id', async (req, res) => {
-  console.log(`Deleting comment with ID: ${req.params.id}`);
   // Delete the comment from the database
   try {
     await db.collection('comments').remove(req.params.id);
-    console.log('Comment deleted successfully');
     res.json({ message: 'Comment deleted successfully' });
   } catch (error) {
     console.error('Error deleting comment:', error);
@@ -93,11 +95,10 @@ app.delete('/api/comments/:id', async (req, res) => {
 // Create Post
 app.post('/api/posts', async (req, res) => {
   const post = req.body;
-  console.log('Creating post:', post);
+
 
   try {
     await db.collection('posts').save(post);
-    console.log('Post created successfully');
     res.json(post);
   } catch (error) {
     console.error('Error creating post:', error);
@@ -120,7 +121,6 @@ app.get('/api/posts', async (req, res) => {
 // Update Post
 app.put('/api/posts/:id', async (req, res) => {
   const post = req.body;
-  console.log(`Updating post with ID: ${req.params.id}, Text: ${post.text}`);
 
   try {
     const result = await db.query({
@@ -130,7 +130,6 @@ app.put('/api/posts/:id', async (req, res) => {
       bindVars: { key: req.params.id, text: post.text }
     });
 
-    console.log('Post updated successfully');
     res.json(result._result);
   } catch (error) {
     console.error('Error updating post:', error);
@@ -140,14 +139,14 @@ app.put('/api/posts/:id', async (req, res) => {
 
 // Delete Post
 app.delete('/api/posts/:id', async (req, res) => {
-  console.log(`Deleting post with ID: ${req.params.id}`);
+
 
   try {
     await db.collection('posts').remove(req.params.id);
-    console.log('Post deleted successfully');
+
     res.json({ message: 'Post deleted successfully' });
   } catch (error) {
-    console.error('Error deleting post:', error);
+
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -160,14 +159,66 @@ app.get('/api/friends/:userId', async (req, res) => {
     const cursor = await db.query(
       'FOR doc IN is_friend FILTER doc._from == "users/' + userId + '" FOR user IN users FILTER user._id == doc._to RETURN user.username');
     const data = await cursor.all();
-    console.log(data);
+
     res.json(data);
   } catch (error) {
-    console.error(error);
+
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
+
+// Define the friends collection
+const friendsCollection = db.collection('friends');
+const usersCollection = db.collection('users');
+// Set up routes
+app.get('/api/friends/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const cursor = await db.query(aql`
+      FOR friend IN ${friendsCollection}
+      FILTER friend.userId == ${userId}
+      RETURN friend
+    `);
+    const friends = await cursor.all();
+    res.json(friends);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/friends/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  const friendData = req.body;
+  friendData.userId = userId;
+  try {
+    const result = await friendsCollection.save(friendData);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/api/friends/:friendId', async (req, res) => {
+  const friendId = req.params.friendId;
+  const friendData = req.body;
+  try {
+    const result = await friendsCollection.update(friendId, friendData);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/api/friends/:friendId', async (req, res) => {
+  const friendId = req.params.friendId;
+  try {
+    const result = await friendsCollection.remove(friendId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Controladores para operaciones CRUD de usuarios
 // Crear un usuario
@@ -177,7 +228,7 @@ app.post('/api/users', async (req, res) => {
     const result = await usersCollection.save(userData);
     res.json(result);
   } catch (error) {
-    console.error(error);
+
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
@@ -201,12 +252,38 @@ app.get('/api/users', async (req, res) => {
 app.get('/api/users/:id', async (req, res) => {
   try {
     const user = await usersCollection.document(req.params.id);
-    res.json(user);
+    if (user) {
+      res.json(user);
+    } else {
+      res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+  } catch (error) {
+
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+app.get('/api/users/by-user/:username', async (req, res) => {
+  try {
+    const username = req.params.username;
+
+    const cursor = await db.query(
+      'FOR user IN users FILTER user.user == @username RETURN user',
+      { username }
+    );
+    const user = await cursor.all();
+    if (user.length === 0) {
+      res.status(404).json({ error: 'Usuario no encontrado' });
+    } else {
+      res.json(user);
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
+
 
 // Actualizar un usuario por ID
 app.put('/api/users/:id', async (req, res) => {

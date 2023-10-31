@@ -2,15 +2,32 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import styles from "../../styles/styles.js"
-
-import { getUsers, getUser, createUser, updateUser, deleteUser } from '../../userConnection.js';
+import { getUserByUsername } from '../../api.js';
 
 function Login() {
-    //Declaracion variables
     const navigate = useNavigate();
     const [usuario, setUsuario] = useState("");
     const [password, setPassword] = useState("");
     const [visible, setVisible] = useState(false);
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        try {
+            const user = await getUserByUsername(usuario);
+            if (user.data) {
+                if (user.data[0].password === password) {
+                    navigate("/posts", { state: { userId: user.data[0]._key, username: user.data[0].user } });
+                } else {
+
+                    console.error('Contraseña incorrecta' + user.data.password);
+                }
+            } else {
+                console.error('Usuario no encontrado from UI');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
         <div >
@@ -25,7 +42,7 @@ function Login() {
                 <div class="bg-[url('https://images.alphacoders.com/132/1324775.png')] bg-no-repeat bg-cover bg-center bg-fixed w-full">
                     <div className="my-60  sm:mx-auto sm:w-full sm:max-w-md">
                         <div className='bg-darkGreen bg-opacity-75 py-4 px-6 shadow sm:rounded-lg sm:px-10'>
-                            <form className="space-y-10" >
+                            <form className="space-y-10" onSubmit={handleLogin}>
                                 <div>
                                     <h1 className='mt-4 text-center text-4xl font-semibold text-white'>
                                         Login
@@ -37,9 +54,9 @@ function Login() {
                                     </label>
                                     <div className='mt-1'>
                                         <input
-                                            name='email'
-                                            type='email'
-                                            autoComplete='email'
+                                            name='username'
+                                            type='text'
+                                            autoComplete='text'
                                             required value={usuario}
                                             onChange={(e) => setUsuario(e.target.value)}
                                             className='appearance-none block w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green focus:border-green sm:text-sm' />

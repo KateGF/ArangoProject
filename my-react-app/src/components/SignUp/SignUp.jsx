@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import styles from "../../styles/styles.js"
 
-import { createUser } from '../../userConnection.js';
+import { createUser } from '../../api.js';
 
 function SignUp() {
     //Declaracion variables

@@ -33,7 +33,6 @@ function Comments({ postID }) {
     const fetchComments = async (idPost) => {
         try {
             const response = await getComments(idPost);
-            console.log(response);
             setComments(response.data);
             setError(null);
         } catch (error) {
